@@ -1,14 +1,14 @@
 pipeline {
     agent any
     triggers {
-        cron("@daliy")
+        cron("@daily")
     }
     stages {
         stage("test") {
             agent {
                 dockerfile {
                     args "-u django:django"
-                    additionalBuildArgs '--build-arg JENKINS_UID=$(id -u $USER) --build-arg JENKINS_GID=$(id -g $USER) --build-arg PIPENV_ARGS="--dev"'
+                    additionalBuildArgs '--build-arg DJANGO_UID=$(id -u $USER) --build-arg DJANGO_GID=$(id -g $USER) --build-arg PIPENV_ARGS="--dev"'
                 }
             }
             steps {

@@ -16,7 +16,7 @@ USER django
 
 COPY --chown=django:django . .
 
-RUN pipenv install "${PIPENV_ARGS}"
+RUN pipenv install "$PIPENV_ARGS"
 
 ENV PYTHONPATH "${PYTHONPATH}:/home/django"
 
