@@ -1,5 +1,5 @@
-# Microsoft-SAPI-service
-A service for text to speech conversion using Microsoft's Speech Application Programming Interface
+# audibene-devops-challenge
+A default django-admin server
 
 Build with:
 
