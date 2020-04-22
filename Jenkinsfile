@@ -9,7 +9,7 @@ pipeline {
                 dockerfile {
                     args "-u django:django"
                     // use single quote to defer interpolation
-                    additionalBuildArgs '--build-arg DJANGO_UID=$(id -u $USER) --build-arg DJANGO_GID=$(id -g $USER) --build-arg PIPENV_ARGS="--dev"'
+                    additionalBuildArgs '--build-arg DJANGO_UID=$(id -u $USER) --build-arg DJANGO_GID=$(id -g $USER) --build-arg PIPENV_DEV="true"'
                 }
             }
             steps {
@@ -21,8 +21,15 @@ pipeline {
             when {
                 branch "develop"
             }
+            environment {
+                // set PATH to use most recent aws cli
+                PATH = "/usr/local/bin:$PATH"
+            }
             steps {
-                sh "docker build ."
+                sh 'aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 482283577367.dkr.ecr.us-east-2.amazonaws.com/jmc/audibene-devops-challenge'
+                sh 'docker build -t jmc/audibene-devops-challenge .'
+                sh 'docker tag jmc/audibene-devops-challenge:latest 482283577367.dkr.ecr.us-east-2.amazonaws.com/jmc/audibene-devops-challenge:latest'
+                sh 'docker push 482283577367.dkr.ecr.us-east-2.amazonaws.com/jmc/audibene-devops-challenge:latest'
             }
         }
     }

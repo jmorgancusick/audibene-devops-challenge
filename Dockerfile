@@ -2,7 +2,9 @@ FROM python:3
 
 ARG DJANGO_UID=1000
 ARG DJANGO_GID=1000
-ARG PIPENV_ARGS
+ARG PIPENV_DEV=false
+
+ENV PIPENV_DEV=$PIPENV_DEV
 
 RUN pip3 install pipenv
 
@@ -16,7 +18,7 @@ USER django
 
 COPY --chown=django:django . .
 
-RUN pipenv install "$PIPENV_ARGS"
+RUN pipenv install
 
 ENV PYTHONPATH "${PYTHONPATH}:/home/django"
 
