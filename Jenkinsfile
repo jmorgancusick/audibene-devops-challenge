@@ -8,12 +8,21 @@ pipeline {
             agent {
                 dockerfile {
                     args "-u django:django"
+                    // use single quote to defer interpolation
                     additionalBuildArgs '--build-arg DJANGO_UID=$(id -u $USER) --build-arg DJANGO_GID=$(id -g $USER) --build-arg PIPENV_ARGS="--dev"'
                 }
             }
             steps {
-                // use single quote so that $HOME isn't exanded by groovy
+                // use single quote to defer interpolation
                 sh '(cd $HOME && pipenv run python3 -m pytest .)'
+            }
+        }
+        stage("develop-branch-deploy") {
+            when {
+                branch "develop"
+            }
+            steps {
+                sh "docker build ."
             }
         }
     }
