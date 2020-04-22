@@ -22,7 +22,7 @@ pipeline {
                 branch "develop"
             }
             steps {
-                sh '(aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 482283577367.dkr.ecr.us-east-2.amazonaws.com/jmc/audibene-devops-challenge)'
+                sh '/bin/bash -c "aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 482283577367.dkr.ecr.us-east-2.amazonaws.com/jmc/audibene-devops-challenge"'
                 sh 'docker build -t jmc/audibene-devops-challenge .'
                 sh 'docker tag jmc/audibene-devops-challenge:latest 482283577367.dkr.ecr.us-east-2.amazonaws.com/jmc/audibene-devops-challenge:latest'
                 sh 'docker push 482283577367.dkr.ecr.us-east-2.amazonaws.com/jmc/audibene-devops-challenge:latest'
