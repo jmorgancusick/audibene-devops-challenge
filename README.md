@@ -73,6 +73,8 @@ Examples (login info above):
 
 * Django DEBUG and ALLOWED_HOSTS settings are okay for now
 
+* Deployments are executed by merging a master -> develop PR
+
 # Further Comments
 
 * By default ```helm```, like ```kubectl```, uses a rolling deployment strategy. Blue/Green or canary deployment strategies could be configured
