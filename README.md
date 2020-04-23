@@ -8,6 +8,14 @@ This is a default Django admin web server running on Amazon EKS. It is live at h
 
 Deployments are handled by a Jenkins server. With username ```guest``` and password ```guest```, the associated Jenkins repository can be viewed at https://jenkins.jmorgancusick.com/job/John%20Cusick/job/audibene-devops-challenge/
 
+Examples (login info above):
+
+    * [PR tests](https://jenkins.jmorgancusick.com/job/John%20Cusick/job/audibene-devops-challenge/view/change-requests/job/PR-2/)
+    
+    * [Successful develop deployment](https://jenkins.jmorgancusick.com/job/John%20Cusick/job/audibene-devops-challenge/job/develop/30/console)
+    
+    * [Failed develop deployment with rollback](https://jenkins.jmorgancusick.com/job/John%20Cusick/job/audibene-devops-challenge/job/develop/27/console)
+
 # Feature Implementation
 
 * **Pull Request Commits**
