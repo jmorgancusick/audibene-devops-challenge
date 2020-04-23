@@ -30,7 +30,7 @@ pipeline {
                 sh 'docker build -t jmc/audibene-devops-challenge .'
                 sh 'docker tag jmc/audibene-devops-challenge:latest 482283577367.dkr.ecr.us-east-2.amazonaws.com/jmc/audibene-devops-challenge:latest'
                 sh 'docker push 482283577367.dkr.ecr.us-east-2.amazonaws.com/jmc/audibene-devops-challenge:latest'
-                sh 'helm upgrade --install --set image.id=$(docker inspect --format="{{index .RepoDigests 0}}" 482283577367.dkr.ecr.us-east-2.amazonaws.com/jmc/audibene-devops-challenge:latest) django-admin .'
+                sh 'helm upgrade --install --atomic --timeout 30s --set image.id=$(docker inspect --format="{{index .RepoDigests 0}}" 482283577367.dkr.ecr.us-east-2.amazonaws.com/jmc/audibene-devops-challenge:latest) django-admin .'
             }
         }
     }
