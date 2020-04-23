@@ -41,6 +41,37 @@ Examples (login info above):
 
 # Assumptions / Dependencies
 
+* Jenkins server
+
+  * Docker installed
+
+  * ```kubectl``` installed and configured, linked to AWS EKS cluster
+  
+  * AWS CLI installed and configured, linked to AWS IAM user
+  
+  * Helm installed
+
+* GitHub webhook to Jenkins server, configured to send all events
+
+* AWS IAM
+
+  * User with ECR, EKS and cluster RBAC ```system:masters``` permissions
+  
+* AWS EKS
+
+  * Kubernetes cluster running
+  
+* AWS ECR
+
+  * Repo created
+  
+* Running tests daily is okay
+
+* Deploying new Helm revisions daily is okay
+
+* Minimal tests are okay
+
+* Django DEBUG and ALLOWED_HOSTS settings are okay for now
 
 # Further Comments
 
