@@ -30,6 +30,5 @@ spec:
       containers:
       - name: django-admin
         image: {{ .Values.image.id }}
-        imagePullPolicy: Always
         ports:
         - containerPort: 8000
