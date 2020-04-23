@@ -29,3 +29,21 @@ Deployments are handled by a Jenkins server. With username ```guest``` and passw
 * **Commits/Merges into ```master```**
 
     * Promotes code to master branch: This functionality is provided by Git. Deployment will not be run because of the aforementioned ```when``` directive and ```branch``` condition.
+
+
+# Assumptions
+
+
+
+# Further Comments
+
+* By default ```helm```, like ```kubectl```, uses a rolling deployment strategy. Blue/Green or canary deployment strategies could be configured
+
+* The Jenkinsfile and Dockerfile work in tandem to specify the ```django``` user id and group id inside the docker agent during the ```test``` stage. This is done to avoid:
+
+   1. Running as a root user inside the container. 
+   2. Introducing a configuration dependency between the Jenkinsfile and Jenkins server.
+   
+   When Jenkins uses a docker container as an agent, it mounts the current workspace to the container as a volume. This mounted volume is owned by the Jenkins server's ```jenkins``` user, or more precisely the ```jenkins``` user's user id and group id. In addition to mounting the volume, Jenkins sets the working directory for the container to the volume. Neither the volume nor the working directory can be overriden by the Jenkinsfile. All of this wouldn't be a problem, except for the fact that ```sh``` steps hang prior to execution if Jenkins does not have write access to the current directory. This is due to attempts to create cache files and files for redirecting stdout/stderr.
+   
+   
