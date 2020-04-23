@@ -77,7 +77,7 @@ Examples (login info above):
 
 * Assume the repo is locked to commits/merges and have to go through review on a third party system like Phabricator; this prevents a lone developer from kicking off a deployment
 
-* Assume Jenkins does not allow replays, preventing a lone developer from executing arbitrary code
+* Assume Jenkins has Authorize Project Plugin or similar to prevent a lone developer from executing arbitrary code/deployments
 
 * Assume no sensitive files in project directory (copying current working directory in Dockerfile is fine)
 
