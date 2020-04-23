@@ -9,7 +9,8 @@ spec:
     app: audibene-devops-challenge
   type: LoadBalancer
   ports:
-  - port: 8000
+  - port: 80
+    targetPort: 8000
     protocol: TCP
 ---
 apiVersion: apps/v1
@@ -29,5 +30,6 @@ spec:
       containers:
       - name: django-admin
         image: 482283577367.dkr.ecr.us-east-2.amazonaws.com/jmc/audibene-devops-challenge:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8000
