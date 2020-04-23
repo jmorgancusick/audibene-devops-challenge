@@ -10,7 +10,7 @@ Deployments are handled by a Jenkins server. With username ```guest``` and passw
 
 Examples (login info above):
 
-* [PR tests](https://jenkins.jmorgancusick.com/job/John%20Cusick/job/audibene-devops-challenge/job/PR-15/)
+* [PR tests](https://jenkins.jmorgancusick.com/job/John%20Cusick/job/audibene-devops-challenge/view/change-requests/job/PR-20/)
     
 * [Successful develop deployment](https://jenkins.jmorgancusick.com/job/John%20Cusick/job/audibene-devops-challenge/job/develop/30/console)
     
