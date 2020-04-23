@@ -73,7 +73,11 @@ Examples (login info above):
 
 * Django DEBUG and ALLOWED_HOSTS settings are okay for now
 
-* Deployments are executed by merging a master -> develop PR
+* Recommended practice for deployments is merging a master -> develop PR
+
+* Assume the repo is locked to commits/merges and have to go through review on a third party system like Phabricator. This prevents a lone developer from kicking off a deployment
+
+* Assume Jenkins does not allow replays, preventing a lone developer from executing arbitrary code.
 
 # Further Comments
 
