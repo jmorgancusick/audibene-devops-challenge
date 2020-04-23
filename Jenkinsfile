@@ -26,12 +26,24 @@ pipeline {
                 PATH = "/usr/local/bin:$PATH"
             }
             steps {
+                // AWS IAM authentication
                 sh 'aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 482283577367.dkr.ecr.us-east-2.amazonaws.com/jmc/audibene-devops-challenge'
+
+                // Build and tag
                 sh 'docker build -t jmc/audibene-devops-challenge .'
                 sh 'docker tag jmc/audibene-devops-challenge:latest 482283577367.dkr.ecr.us-east-2.amazonaws.com/jmc/audibene-devops-challenge:latest'
+
+                // Push to AWS ECR
                 sh 'docker push 482283577367.dkr.ecr.us-east-2.amazonaws.com/jmc/audibene-devops-challenge:latest'
+
+                // Deploy to AWS EKS, rollback on failure
                 sh 'helm upgrade --install --atomic --timeout 30s --set image.id=$(docker inspect --format="{{index .RepoDigests 0}}" 482283577367.dkr.ecr.us-east-2.amazonaws.com/jmc/audibene-devops-challenge:latest) django-admin .'
             }
+        }
+    }
+    post {
+        cleanup {
+            cleanWs()
         }
     }
 }

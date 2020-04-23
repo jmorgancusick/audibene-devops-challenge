@@ -1,27 +1,26 @@
+```master```: [![Build Status](https://jenkins.jmorgancusick.com/buildStatus/icon?job=John+Cusick%2Faudibene-devops-challenge%2Fmaster)](https://jenkins.jmorgancusick.com/job/John%20Cusick/job/audibene-devops-challenge/job/master/)
+
+```develop```: [![Build Status](https://jenkins.jmorgancusick.com/buildStatus/icon?job=John+Cusick%2Faudibene-devops-challenge%2Fdevelop)](https://jenkins.jmorgancusick.com/job/John%20Cusick/job/audibene-devops-challenge/job/develop/)
+
 # audibene-devops-challenge
-A default django-admin server
 
-Build with:
+This is a default Django admin web server running on Amazon EKS. It is live at http://a635be4af311c43b4b3761316d793b22-1623537517.us-east-2.elb.amazonaws.com/
 
-~~~
-docker build . -t django-admin
-~~~
+Deployments are handled by a Jenkins server. With username ```guest``` and password ```guest```, the associated Jenkins repository can be viewed at https://jenkins.jmorgancusick.com/job/John%20Cusick/job/audibene-devops-challenge/
 
+Examples (login info above):
 
-Run with:
+* [PR tests](https://jenkins.jmorgancusick.com/job/John%20Cusick/job/audibene-devops-challenge/job/PR-15/)
+    
+* [Successful develop deployment](https://jenkins.jmorgancusick.com/job/John%20Cusick/job/audibene-devops-challenge/job/develop/30/console)
+    
+* [Failed develop deployment with rollback](https://jenkins.jmorgancusick.com/job/John%20Cusick/job/audibene-devops-challenge/job/develop/27/console)
 
-~~~
-docker run -p 8000:8000 django-admin
-~~~
-
-Then connect to 127.0.0.1:8000
-
-
-# Feature Explanation
+# Feature Implementation
 
 * **Pull Request Commits**
 
-    * Trigger tests: Pull requests kick off a Jenkins build due to the ```https://jenkins.jmorgancusick.com/github-webhook/``` supplying all events to the Jeknins server. Tests are run in the first stage of the Jenkinsfile's pipeline.
+    * Trigger tests: Pull requests kick off a Jenkins build due to the ```https://jenkins.jmorgancusick.com/github-webhook/``` supplying all events to the Jeknins server. Tests are run in the first stage of the Jenkinsfile's pipeline. The stage runs in a docker container that is built using this repos Dockerfile. Pytest is used to mock function calls for this project's unit test.
     
 * **Commits/Merges into ```develop```**
 
@@ -31,10 +30,68 @@ Then connect to 127.0.0.1:8000
     
     * Push built image to ECR: Several steps are required in order to authenticate, tag and ultimately push the docker image to Amazon Elastic Container Registry (ECR). The ```jenkins``` user on the Jenkins server has access to the Amazon Web Service (AWS) Command Line Interface (CLI). The AWS CLI is configured with a corresponding ```jenkins``` user on AWS Identity and Access Management (IAM), who has full access to Amazon Elastic Container Registry (ECR). The AWS CLI is used to help login to docker with the proper credentials and gain access to Amazon ECR from the Jenkins server. Once access is gained and the docker build is complete, it's only a matter of tagging the image and pushing it to up to Amazon ECR.
     
-    * Deploy code to Kubernetes: I used Amazon Elastic Kubernetes Service (EKS) to create a Kubernetes cluster. 
+    * Deploy code to Kubernetes: I used Amazon Elastic Kubernetes Service (EKS) to create a Kubernetes cluster. The aforementioned AWS IAM ```jenkins``` user must have EKS permissions *and* be granted ```system:masters``` permissions in the cluster's RBAC configuration (guide [here](https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html)). With these permissions in place, the Jenkins server's ```jenkins``` user can access EKS with a properly configured ```kubectl```. I then built a deployment (```templates/deployment.yaml```) file for my django-admin web server, which consisted of one deployment with one pod and one load balancing service. The most interesting part of the deployment file is the image definition, which uses a variable instead of a hardcoded name and tag. This variable will be used to substitute images in by Helm, which was introduced when the need for rollbacks arose (see "Rollback in case of failure" below). Helm is a package manager for Kubernetes, but for this project I mostly leverage its templated Kubernetes resources ("charts") and rollback utilities. Helm is used in place of ```kubectl``` to deploy the Kubernetes application. Instead of tags, I use digests to identify containers, for better auditing and security. The digest of the image built in the previous step is substituted for the ```deployment.yaml```'s image variable. Helm then upgrades the Kubernetes cluster to the new build.
     
-    * Rollback in case of failure:
+    * Rollback in case of failure: Similar to ```kubectl apply```, Helm does not verify a deployment after resources are created. With helm, one can use ```--wait``` and ```--timeout``` to verify that a deployment was successful before exiting. On top of that, ```--rollback``` can be used along with a revision number to rollback a deployment. Helm saves you from parsing the revision number by wraping all these features into one argument: ```--atomic```. Enabling the atomic option for a ```helm upgrade``` command will also enable ```--wait```, and automatically rollback if a deployment fails! This can be verified by intentionally breaking the build (example [here](https://jenkins.jmorgancusick.com/job/John%20Cusick/job/audibene-devops-challenge/job/develop/27/console)).
 
 * **Commits/Merges into ```master```**
 
-    * Promotes code to master branch:
+    * Promotes code to master branch: This functionality is provided by Git. Deployment will not be run because of the aforementioned ```when``` directive and ```branch``` condition.
+
+
+# Assumptions / Dependencies
+
+* Jenkins server
+
+  * Docker installed
+
+  * ```kubectl``` installed and configured, linked to AWS EKS cluster
+  
+  * AWS CLI installed and configured, linked to AWS IAM user
+  
+  * Helm installed
+
+* GitHub webhook to Jenkins server, configured to send all events
+
+* AWS IAM
+
+  * User with ECR, EKS and cluster RBAC ```system:masters``` permissions
+  
+* AWS EKS
+
+  * Kubernetes cluster running
+  
+* AWS ECR
+
+  * Repo created
+  
+* Running tests daily is okay
+
+* Deploying new Helm revisions daily is okay
+
+* Minimal tests are okay
+
+* Django DEBUG and ALLOWED_HOSTS settings are okay for now
+
+* Recommended practice for deployments is merging a master -> develop PR
+
+* Assume the repo is locked to commits/merges and have to go through review on a third party system like Phabricator; this prevents a lone developer from kicking off a deployment
+
+* Assume Jenkins does not allow replays, preventing a lone developer from executing arbitrary code
+
+* Assume no sensitive files in project directory (copying current working directory in Dockerfile is fine)
+
+# Further Comments
+
+* By default ```helm```, like ```kubectl```, uses a rolling deployment strategy. Blue/Green or canary deployment strategies could be configured
+
+* The Jenkinsfile and Dockerfile work in tandem to specify the ```django``` user id (uid) and group id (gid) inside the docker agent during the ```test``` stage. This is done to avoid:
+
+   1. Running as a root user inside the container. 
+   2. Introducing a configuration dependency between the Jenkinsfile and Jenkins server.
+   
+   When Jenkins uses a docker container as an agent, it mounts the current workspace to the container as a volume. This mounted volume is owned by the Jenkins server's ```jenkins``` user, or more precisely the ```jenkins``` user's user id and group id. In addition to mounting the volume, Jenkins sets the working directory for the container to the volume. Neither the volume nor the working directory can be overriden by the Jenkinsfile. All of this wouldn't be a problem, except for the fact that ```sh``` steps hang prior to execution if Jenkins does not have write access to the current directory. This is due to attempts to create cache files and files for redirecting stdout/stderr.
+   
+   Two predominant solutions exist: utilize root user in the container or manually configure your container's user to have the same uid and gid as your Jenkins user. These solutions are equally heinous. Running as a root user in a container introduces a big security vulnerability, while tying your container and Jenkins server's uids/gids together prevents the same pipeline from working on other servers. The latter could even cause conflicts between two repositories on the same server, if they both had a uid/gid requirement. An elegant solution turns out to be the latter, but with a touch of automation. By having Jenkins pass its uid and gid to the container at build time, the crisis can be averted.
+   
+* Each branch is built daily. This is particularly interesting with ```develop```, as it will cause a new revision and deploy each day. I don't see that as a bad thing.
