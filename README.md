@@ -3,23 +3,10 @@
 ```develop```: [![Build Status](https://jenkins.jmorgancusick.com/buildStatus/icon?job=John+Cusick%2Faudibene-devops-challenge%2Fdevelop)](https://jenkins.jmorgancusick.com/job/John%20Cusick/job/audibene-devops-challenge/job/develop/)
 
 # audibene-devops-challenge
-A default django-admin server
 
-Build with:
+This is a default Django admin web server running on Amazon EKS. It is live at http://a635be4af311c43b4b3761316d793b22-1623537517.us-east-2.elb.amazonaws.com/
 
-~~~
-docker build . -t django-admin
-~~~
-
-
-Run with:
-
-~~~
-docker run -p 8000:8000 django-admin
-~~~
-
-Then connect to 127.0.0.1:8000
-
+Deployments are handled by a Jenkins server. With username ```guest``` and password ```guest```, the associated Jenkins repository can be viewed at https://jenkins.jmorgancusick.com/job/John%20Cusick/job/audibene-devops-challenge/
 
 # Feature Implementation
 
