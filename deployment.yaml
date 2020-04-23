@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-admin-service
+  labels:
+    app: audibene-devops-challenge
+spec:
+  selector:
+    app: audibene-devops-challenge
+  type: LoadBalancer
+  ports:
+  - port: 8000
+    protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-admin-deployment
+spec:
+  selector:
+    matchLabels:
+      app: audibene-devops-challenge
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: audibene-devops-challenge
+    spec:
+      containers:
+      - name: django-admin
+        image: 482283577367.dkr.ecr.us-east-2.amazonaws.com/jmc/audibene-devops-challenge:latest
+        ports:
+        - containerPort: 8000
