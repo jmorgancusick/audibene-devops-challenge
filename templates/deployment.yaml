@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
       - name: django-admin
-        image: 482283577367.dkr.ecr.us-east-2.amazonaws.com/jmc/audibene-devops-challenge:latest
+        image: {{ .Values.image.id }}
         imagePullPolicy: Always
         ports:
         - containerPort: 8000
