@@ -39,11 +39,13 @@ Deployments are handled by a Jenkins server. With username ```guest``` and passw
 
 * By default ```helm```, like ```kubectl```, uses a rolling deployment strategy. Blue/Green or canary deployment strategies could be configured
 
-* The Jenkinsfile and Dockerfile work in tandem to specify the ```django``` user id and group id inside the docker agent during the ```test``` stage. This is done to avoid:
+* The Jenkinsfile and Dockerfile work in tandem to specify the ```django``` user id (uid) and group id (gid) inside the docker agent during the ```test``` stage. This is done to avoid:
 
    1. Running as a root user inside the container. 
    2. Introducing a configuration dependency between the Jenkinsfile and Jenkins server.
    
    When Jenkins uses a docker container as an agent, it mounts the current workspace to the container as a volume. This mounted volume is owned by the Jenkins server's ```jenkins``` user, or more precisely the ```jenkins``` user's user id and group id. In addition to mounting the volume, Jenkins sets the working directory for the container to the volume. Neither the volume nor the working directory can be overriden by the Jenkinsfile. All of this wouldn't be a problem, except for the fact that ```sh``` steps hang prior to execution if Jenkins does not have write access to the current directory. This is due to attempts to create cache files and files for redirecting stdout/stderr.
+   
+   Two predominant solutions exist: utilize root user in the container or manually configure your container's user to have the same uid and gid as your Jenkins user. These solutions are equally heinous. Running as a root user in a container introduces a big security vulnerability, while tying your container and Jenkins server's uids/gids together prevents the same pipeline from working on other servers. The latter could even cause conflicts between two repositories on the same server, if they both had a uid/gid requirement. An elegant solution turns out to be the latter, but with a touch of automation. By having Jenkins pass its uid and gid to the container at build time, the crisis can be averted.
    
    
