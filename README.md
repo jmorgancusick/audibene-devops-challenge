@@ -75,9 +75,11 @@ Examples (login info above):
 
 * Recommended practice for deployments is merging a master -> develop PR
 
-* Assume the repo is locked to commits/merges and have to go through review on a third party system like Phabricator. This prevents a lone developer from kicking off a deployment
+* Assume the repo is locked to commits/merges and have to go through review on a third party system like Phabricator; this prevents a lone developer from kicking off a deployment
 
-* Assume Jenkins does not allow replays, preventing a lone developer from executing arbitrary code.
+* Assume Jenkins does not allow replays, preventing a lone developer from executing arbitrary code
+
+* Assume no sensitive files in project directory (copying current working directory in Dockerfile is fine)
 
 # Further Comments
 
