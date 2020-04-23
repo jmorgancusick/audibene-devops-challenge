@@ -31,8 +31,7 @@ Deployments are handled by a Jenkins server. With username ```guest``` and passw
     * Promotes code to master branch: This functionality is provided by Git. Deployment will not be run because of the aforementioned ```when``` directive and ```branch``` condition.
 
 
-# Assumptions
-
+# Assumptions / Dependencies
 
 
 # Further Comments
@@ -48,4 +47,4 @@ Deployments are handled by a Jenkins server. With username ```guest``` and passw
    
    Two predominant solutions exist: utilize root user in the container or manually configure your container's user to have the same uid and gid as your Jenkins user. These solutions are equally heinous. Running as a root user in a container introduces a big security vulnerability, while tying your container and Jenkins server's uids/gids together prevents the same pipeline from working on other servers. The latter could even cause conflicts between two repositories on the same server, if they both had a uid/gid requirement. An elegant solution turns out to be the latter, but with a touch of automation. By having Jenkins pass its uid and gid to the container at build time, the crisis can be averted.
    
-   
+* Each branch is built daily. This is particularly interesting with ```develop```, as it will cause a new revision and deploy each day. I don't see that as a bad thing.
