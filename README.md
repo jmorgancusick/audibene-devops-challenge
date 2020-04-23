@@ -1,3 +1,7 @@
+```master```: [![Build Status](https://jenkins.jmorgancusick.com/buildStatus/icon?job=John+Cusick%2Faudibene-devops-challenge%2Fmaster)](https://jenkins.jmorgancusick.com/job/John%20Cusick/job/audibene-devops-challenge/job/master/)
+
+```develop```: [![Build Status](https://jenkins.jmorgancusick.com/buildStatus/icon?job=John+Cusick%2Faudibene-devops-challenge%2Fdevelop)](https://jenkins.jmorgancusick.com/job/John%20Cusick/job/audibene-devops-challenge/job/develop/)
+
 # audibene-devops-challenge
 A default django-admin server
 
