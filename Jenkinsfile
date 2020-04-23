@@ -26,8 +26,7 @@ pipeline {
                 PATH = "/usr/local/bin:$PATH"
             }
             steps {
-                // AWS IAM authentication
-                sh 'aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 482283577367.dkr.ecr.us-east-2.amazonaws.com/jmc/audibene-devops-challenge'
+                // AWS IAM authentication configured in ~/.docker/config.json, login not required
 
                 // Build and tag
                 sh 'docker build -t jmc/audibene-devops-challenge .'
