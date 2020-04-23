@@ -20,7 +20,7 @@ Examples (login info above):
 
 * **Pull Request Commits**
 
-    * Trigger tests: Pull requests kick off a Jenkins build due to the ```https://jenkins.jmorgancusick.com/github-webhook/``` supplying all events to the Jeknins server. Tests are run in the first stage of the Jenkinsfile's pipeline.
+    * Trigger tests: Pull requests kick off a Jenkins build due to the ```https://jenkins.jmorgancusick.com/github-webhook/``` supplying all events to the Jeknins server. Tests are run in the first stage of the Jenkinsfile's pipeline. The stage runs in a docker container that is built using this repos Dockerfile. Pytest is used to mock function calls for this project's unit test.
     
 * **Commits/Merges into ```develop```**
 
