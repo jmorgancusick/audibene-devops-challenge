@@ -37,4 +37,4 @@ Then connect to 127.0.0.1:8000
 
 * **Commits/Merges into ```master```**
 
-    * Promotes code to master branch: Unless I misunderstand, this functionality is provided by Git.
+    * Promotes code to master branch: This functionality is provided by Git. Deployment will not be run because of the aforementioned ```when``` directive and ```branch``` condition.
